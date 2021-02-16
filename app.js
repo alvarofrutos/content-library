@@ -9,6 +9,14 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
+//Set up mongoose connection
+var mongoose = require('mongoose');
+var mongoDB = 'mongodb://Public:RGgY0R0SGtsHHYDc@bambucluster-shard-00-00-2vz9g.mongodb.net:27017,bambucluster-shard-00-01-2vz9g.mongodb.net:27017,bambucluster-shard-00-02-2vz9g.mongodb.net:27017/content-library?ssl=true&replicaSet=BambuCluster-shard-0&authSource=admin&retryWrites=true';
+mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.Promise = global.Promise;
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
