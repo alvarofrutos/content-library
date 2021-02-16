@@ -1,8 +1,36 @@
+/* General styles */
 body {
-  padding: 50px;
+  padding-top: 4rem;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-a {
-  color: #00B7FF;
+.navbar-brand>img {
+  height: 30px;
+  width: auto;
+}
+
+.max720 {
+  max-width: 720px;
+}
+
+
+/* Override anchor style */
+.a-override {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+.a-override:hover {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+.a-override:active {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+.a-override:visited {
+  color: inherit;
+  text-decoration: inherit;
 }

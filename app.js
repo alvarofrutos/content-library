@@ -1,23 +1,45 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const mongoose = require('mongoose');
+const logger = require('morgan');
+const helmet = require('helmet');
+const bcrypt = require('bcrypt');
+const path = require('path');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const MongoStore = require('connect-mongo')(session);
 
-var app = express();
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+
+const loginController = require('./controllers/login-controller');
+
+
+const app = express();
 
 //Set up mongoose connection
-var mongoose = require('mongoose');
-var mongoDB = 'mongodb://Public:RGgY0R0SGtsHHYDc@bambucluster-shard-00-00-2vz9g.mongodb.net:27017,bambucluster-shard-00-01-2vz9g.mongodb.net:27017,bambucluster-shard-00-02-2vz9g.mongodb.net:27017/content-library?ssl=true&replicaSet=BambuCluster-shard-0&authSource=admin&retryWrites=true';
+const mongoDB = 'mongodb://Public:RGgY0R0SGtsHHYDc@bambucluster-shard-00-00-2vz9g.mongodb.net:27017,bambucluster-shard-00-01-2vz9g.mongodb.net:27017,bambucluster-shard-00-02-2vz9g.mongodb.net:27017/content-library?ssl=true&replicaSet=BambuCluster-shard-0&authSource=admin&retryWrites=true';
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.Promise = global.Promise;
-var db = mongoose.connection;
+const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-// view engine setup
+
+// Use helmet for protection
+app.use(helmet());
+
+// Use sessions for login
+app.use(session({
+  secret: 'Content library',
+  resave: false,
+  saveUninitialized: false,
+  store: new MongoStore({
+    mongooseConnection: db
+  })
+}));
+
+// View engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
@@ -25,23 +47,35 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// Use public resources
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Use Bootstrap, JQuery and Popper.js
+app.use('/js', express.static(__dirname + '/node_modules/bootstrap/dist/js'));
+app.use('/js', express.static(__dirname + '/node_modules/jquery/dist'));
+app.use('/js', express.static(__dirname + '/node_modules/popper.js/dist'));
+app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
+
+// Set the login middleware
+app.use('/users', loginController.requiresLogin);
+
+// Route settings
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-// catch 404 and forward to error handler
+// Catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// error handler
+// Error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
+  // Set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
+  // Render the error page
   res.status(err.status || 500);
   res.render('error');
 });
