@@ -5,6 +5,8 @@
       "script" : "#!\/bin\/sh\nDEBUG=content-library:* npm run devstart"
     }
   },
+  "environment" : {
+  },
   "identifier" : "B4836077-F797-46B0-A216-97FAD9DE249F",
   "openLogOnRun" : "finish"
 }

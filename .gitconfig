@@ -1,0 +1,2 @@
+[filter "ignore-uri"]
+	clean = "sed '/^.*URI.*$/d'"
