@@ -19,7 +19,7 @@ const loginController = require('./controllers/login-controller');
 const app = express();
 
 //Set up mongoose connection
-const mongoDB = 'mongodb://Public:RGgY0R0SGtsHHYDc@bambucluster-shard-00-00-2vz9g.mongodb.net:27017,bambucluster-shard-00-01-2vz9g.mongodb.net:27017,bambucluster-shard-00-02-2vz9g.mongodb.net:27017/content-library?ssl=true&replicaSet=BambuCluster-shard-0&authSource=admin&retryWrites=true';
+const mongoDB = process.env.MONGODB_URI;
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.Promise = global.Promise;
 const db = mongoose.connection;
