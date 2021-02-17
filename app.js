@@ -15,7 +15,6 @@ const usersRouter = require('./routes/users');
 
 const loginController = require('./controllers/login-controller');
 
-
 const app = express();
 
 //Set up mongoose connection
@@ -25,19 +24,20 @@ mongoose.Promise = global.Promise;
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-
 // Use helmet for protection
 app.use(helmet());
 
 // Use sessions for login
-app.use(session({
-  secret: 'Content library',
-  resave: false,
-  saveUninitialized: false,
-  store: new MongoStore({
-    mongooseConnection: db
+app.use(
+  session({
+    secret: 'Content library',
+    resave: false,
+    saveUninitialized: false,
+    store: new MongoStore({
+      mongooseConnection: db,
+    }),
   })
-}));
+);
 
 // View engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -57,20 +57,20 @@ app.use('/js', express.static(__dirname + '/node_modules/jquery/dist'));
 app.use('/js', express.static(__dirname + '/node_modules/popper.js/dist'));
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
 
-// Set the login middleware
-app.use('/users', loginController.requiresLogin);
+// Set the user data middleware for all routes
+app.use('/', loginController.setUserData);
 
 // Route settings
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 // Catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // Error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // Set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

@@ -1,38 +1,9 @@
-doctype html
-html(lang='en')
-  head
-    title= title
-    meta(charset='utf-8')
-    meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
-    link(rel='stylesheet', href='/css/bootstrap.min.css')
-    
-    script(src='/js/jquery.min.js')
-    script(src='/js/popper.min.js')
-    script(src='/js/bootstrap.min.js')
-    
-    link(rel='stylesheet', href='/stylesheets/style.css')
-    
-    block head
-  
-  body.bg-white
-  
-    nav.navbar.navbar-expand-sm.fixed-top.navbar-light.bg-light.border-bottom.pr-2
-      
-      a.navbar-brand(href='/') CL
-      
-      button.navbar-toggler(type='button', data-toggle='collapse', data-target='#app-navbar', aria-controls='app-navbar', aria-expanded='false', aria-label='Toggle navigation')
-        span.navbar-toggler-icon
-      
-      div#app-navbar.collapse.navbar-collapse
-        block navbar
-          ul.navbar-nav.mr-auto
-            
-            block navbar-extra
-        
-        div.mt-3.mt-sm-0
-          block nav-button
-    
-    
-    block content
+extends layout-base
 
-    div.my-4.small.font-weight-light.text-muted.text-center Copyright © 2021 Álvaro Frutos
+block nav-button
+  ul.navbar-nav.ml-auto
+    li.nav-item
+      if !authenticated
+        a.btn.btn-sm.btn-primary.text-light(href='/register') Join
+      else
+        a.btn.btn-sm.btn-primary.text-light(href='/logout') Log out
