@@ -4,13 +4,6 @@ const async = require('async');
 
 const { body, validationResult } = require('express-validator');
 
-// Function to check if an user is logged in
-function isLoggedIn(req) {
-  return req.session && req.session.userId;
-}
-
-exports.isLoggedIn = isLoggedIn;
-
 // Display login form on GET.
 exports.loginGet = function (req, res, next) {
   res.render('login-form', { title: 'Login' });
@@ -35,8 +28,6 @@ exports.loginPost = [
   (req, res, next) => {
     // Extract the validation errors from a request.
     const errors = validationResult(req);
-
-    // Check if pass
 
     if (!errors.isEmpty()) {
       // There are errors. Render form again with sanitised values/error messages.
@@ -107,14 +98,6 @@ exports.registerPost = [
     // Extract the validation errors from a request.
     const errors = validationResult(req);
 
-    // Create a User object with escaped and trimmed data.
-    var user = new User({
-      firstName: req.body.firstName,
-      familyName: req.body.familyName,
-      email: req.body.email,
-      password: req.body.password,
-    });
-
     if (!errors.isEmpty()) {
       // There are errors. Render form again with sanitised values/error messages.
       res.render('register-form', {
@@ -123,7 +106,13 @@ exports.registerPost = [
         errors: errors.array(),
       });
     } else {
-      // Data from form is valid
+      // Create a User object with escaped and trimmed data.
+      var user = new User({
+        firstName: req.body.firstName,
+        familyName: req.body.familyName,
+        email: req.body.email,
+        password: req.body.password,
+      });
       user.save(function (err) {
         if (err) {
           return next(err);
@@ -141,24 +130,19 @@ exports.logoutGet = function (req, res, next) {
       if (err) {
         return next(err);
       }
-      res.redirect('/login');
+      res.redirect('/');
     });
   }
 };
 
 // Middleware for setting the user data
 exports.setUserData = function (req, res, next) {
-  res.locals.authenticated = isLoggedIn(req);
-  if (res.locals.authenticated) {
-    User.findOne({ email: req.session.userId }).exec(function (err, user) {
+  if (req.session && req.session.userId) {
+    User.findOne({ _id: req.session.userId }).exec(function (err, user) {
       if (err) {
         return next(err);
       } else {
-        if (user) {
-          res.locals.user = user.email;
-          res.locals.admin = user.admin;
-          res.locals.premium = user.premium;
-        }
+        res.locals.activeUser = user;
         return next();
       }
     });
@@ -169,7 +153,7 @@ exports.setUserData = function (req, res, next) {
 
 // Middleware for checking the session
 exports.requiresLogin = function (req, res, next) {
-  if (isLoggedIn(req)) {
+  if (res.locals.activeUser) {
     return next();
   } else {
     res.redirect('/login');

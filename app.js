@@ -60,6 +60,9 @@ app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
 // Set the user data middleware for all routes
 app.use('/', loginController.setUserData);
 
+// Set the require login middleware for all pages where a login is required
+app.use('/users', loginController.requiresLogin);
+
 // Route settings
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
