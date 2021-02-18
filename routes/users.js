@@ -7,7 +7,7 @@ const userController = require('../controllers/user-controller');
 /// MAIN ROUTES ///
 
 // GET home page.
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
   // Redirect to user list. This can be changed if webpage is extended in the future
   res.redirect('/users/list');
 });
@@ -17,7 +17,7 @@ router.get('/', function(req, res, next) {
 // GET request for creating a User.
 router.get('/user/create', userController.userCreateGet);
 
-// POST request for creating User. 
+// POST request for creating User.
 router.post('/user/create', userController.userCreatePost);
 
 // GET request to delete User.
@@ -37,6 +37,5 @@ router.get('/user/:id', userController.userDetail);
 
 // GET request for list of all Users.
 router.get('/list', userController.userList);
-
 
 module.exports = router;

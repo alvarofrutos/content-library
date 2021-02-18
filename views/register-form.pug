@@ -1,4 +1,4 @@
-extends layout
+extends layout-base
 
 block content
   div.container-fluid.max720
@@ -15,7 +15,15 @@ block content
     div.row.mx-0
       div.col-sm.bg-light.rounded.shadow-sm.p-3
         form(method='POST' action='')
+  
+          div.form-group
+            label(for='firstName') First name
+            input#firstName.form-control(type='text', placeholder='John', name='firstName', required=true, value=(undefined===attempt ? '' : attempt.firstName) )
 
+          div.form-group
+            label(for='familyName') Last name
+            input#familyName.form-control(type='text', placeholder='Doe', name='familyName', required=true, value=(undefined===attempt ? '' : attempt.familyName) )
+  
           div.form-group
             label(for='email') Email
             input#email.form-control(type='email', placeholder='john.doe@company.com', name='email', required=true, value=(undefined===attempt ? '' : attempt.email) )
