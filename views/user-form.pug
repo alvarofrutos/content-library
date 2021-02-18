@@ -30,10 +30,7 @@ block content
     
           if activeUser && activeUser.admin
             div.form-check
-              if (undefined!==user && user.admin)
-                input#admin.form-check-input(type='checkbox', name='admin', checked=true )
-              else
-                input#admin.form-check-input(type='checkbox', name='admin' )
+              input#admin.form-check-input(type='checkbox', name='admin', checked=((undefined!==user && user.admin) ? true : false) disabled=((undefined!==user && undefined !== activeUser && user._id.toString() == activeUser._id.toString()) ? true : false))
               label.form-check-label(for='admin') Administrator
 
           
